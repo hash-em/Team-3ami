@@ -8,6 +8,13 @@ import joblib
 def preprocess(df):
 
     df = df.copy()
+    # Cyclical encoding for month/week/day (captures periodicity)
+    df["Month_Sin"] = np.sin(2 * np.pi * df["Policy_Start_Month"] / 12)
+    df["Month_Cos"] = np.cos(2 * np.pi * df["Policy_Start_Month"] / 12)
+    df["Week_Sin"] = np.sin(2 * np.pi * df["Policy_Start_Week"] / 52)
+    df["Week_Cos"] = np.cos(2 * np.pi * df["Policy_Start_Week"] / 52)
+    df["Day_Sin"] = np.sin(2 * np.pi * df["Policy_Start_Day"] / 31)
+    df["Day_Cos"] = np.cos(2 * np.pi * df["Policy_Start_Day"] / 31)
 
     # -------------------------
     # DROP IDS
@@ -69,7 +76,33 @@ def preprocess(df):
         df["Underwriting_Processing_Days"]
         + df["Days_Since_Quote"]
     )
+    # Risk score
+    df["Risk_Score"] = (
+        df["Previous_Claims_Filed"] * 2
+        - df["Years_Without_Claims"]
+        + df["Policy_Cancelled_Post_Purchase"] * 3
+        + df["Grace_Period_Extensions"]
+    )
 
+    # Income per dependent (purchasing power)
+    df["Income_Per_Dependent"] = df["Estimated_Annual_Income"] / (df["Total_Dependents"] + 1)
+
+    # Engagement score (how involved the customer is)
+    df["Engagement_Score"] = (
+        df["Policy_Amendments_Count"]
+        + df["Grace_Period_Extensions"]
+        + df["Custom_Riders_Requested"]
+    )
+
+    # Is a returning customer?
+    df["Is_Returning"] = df["Existing_Policyholder"].astype(int)
+
+    # Long-term loyalty proxy
+    df["Loyalty_Score"] = df["Years_Without_Claims"] * df["Previous_Policy_Duration_Months"]
+    # Existing customers with no claims are very different from new ones
+    df["Loyal_No_Claims"] = (
+        (df["Existing_Policyholder"] == 1) & (df["Years_Without_Claims"] > 3)
+    ).astype(int)
     return df
 
 def load_model():
