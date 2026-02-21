@@ -5,6 +5,31 @@ from solution import preprocess
 # LOAD DATAe
 # ==============================
 
+from scipy.stats import ks_2samp
+
+def drift_report(train, test, numeric_cols, alpha=0.01):
+    results = []
+
+    for c in numeric_cols:
+        if c not in test.columns:
+            continue
+
+        stat, p = ks_2samp(train[c].dropna(), test[c].dropna())
+        results.append((c, stat, p))
+
+    df = pd.DataFrame(results, columns=["feature","ks_stat","p_value"])
+    df = df.sort_values("p_value")
+
+    print(df)
+
+    drifted = df[df["p_value"] < alpha]
+
+    print("\n--- Significant Drift ---")
+    if len(drifted) == 0:
+        print("No significant drift detected.")
+    else:
+        print(drifted)
+
 train = pd.read_csv("train.csv")
 raw = train
 train = preprocess(train)
@@ -185,3 +210,29 @@ for col in train.columns:
 print("\n" + "="*60)
 print("AUDIT COMPLETE")
 print("="*60)
+
+# ==============================
+# LOAD TEST DATA FOR DRIFT CHECK
+# ==============================
+
+test = pd.read_csv("test.csv")
+test = preprocess(test)
+
+# ==============================
+# NUMERIC COLUMNS (COMMON ONLY)
+# ==============================
+
+numeric_cols = train.select_dtypes(include=["int64","float64"]).columns
+
+# make sure both datasets share columns
+numeric_cols = [c for c in numeric_cols if c in test.columns]
+
+# ==============================
+# RUN DRIFT DETECTION
+# ==============================
+
+print("\n" + "="*60)
+print("TRAIN vs TEST DRIFT CHECK (KS TEST)")
+print("="*60)
+
+drift_report(train, test, numeric_cols)

@@ -31,7 +31,7 @@ def preprocess(df):
 
     for c in cat_cols:
         if c in df.columns:
-            df[c] = df[c].fillna(NAN)
+            df[c] = df[c].fillna("unknown")
 
     # -------------------------
     # CAP EXTREMES
@@ -71,6 +71,7 @@ def preprocess(df):
     )
 
     return df
+
 def load_model():
     # Load and return your trained model from disk.
     # Example: return joblib.load('model.pkl')
