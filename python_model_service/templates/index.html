@@ -4,37 +4,307 @@
   <meta charset="</head>utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BundleIQ — Recommender (Vanilla UI)</title>
+  <link rel="stylesheet" href="static/style.css">
+
   <style>
-    :root{
-      --bg:#071029;
-      --card:#0b1422;
-      --muted:#94a3b8;
-      --accent:#2b7ddf;
-      --good:#10b981;
-      --danger:#ef4444;
-      --radius:10px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", monospace;
-    }
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial; background:linear-gradient(180deg,#041226,#071129); color:#e6eef8}
-    .container{max-width:1100px;margin:28px auto;padding:18px}
-    header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-    header h1{margin:0;font-size:20px}
-    header .subtitle{color:var(--muted);font-size:13px}
-    .layout{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
-    .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
-    label{display:block;margin-bottom:6px;color:var(--muted);font-size:13px}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    input[type="text"], input[type="number"], select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;box-sizing:border-box}
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:0;background:linear-gradient(180deg,var(--accent),#1b61b0);color:#fff;font-weight:700;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-    .result-circle{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;margin:10px auto;border:3px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)}
-    pre.inline{background:#071323;padding:10px;border-radius:8px;color:#cfe9ff;overflow:auto;font-family:var(--mono);font-size:13px}
-    .small{font-size:13px;color:var(--muted)}
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th,td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
-    th{color:var(--muted);font-size:12px;text-transform:uppercase}
-    footer{color:var(--muted);font-size:12px;margin-top:18px;text-align:center}
-    .stack{display:flex;flex-direction:column;gap:12px}
+
+  /* =========================================================
+     HYPER MODERN CORPORATE UI
+     Premium SaaS / Apple / Stripe / Linear aesthetic
+     ========================================================= */
+
+  :root{
+    --bg:#050b18;
+    --bg-2:#08142c;
+
+    --card:rgba(255,255,255,0.035);
+    --card-border:rgba(255,255,255,0.08);
+
+    --text:#eaf2ff;
+    --muted:#8fa3bf;
+
+    --accent:#3b82f6;
+    --accent-2:#60a5fa;
+    --accent-glow:rgba(59,130,246,0.45);
+
+    --good:#10b981;
+    --danger:#ef4444;
+
+    --radius:14px;
+    --radius-sm:10px;
+
+    --shadow:
+      0 12px 40px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(255,255,255,0.03) inset;
+
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+  }
+
+
+  /* ---------- Base ---------- */
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    color:var(--text);
+
+    background:
+      radial-gradient(circle at 15% 0%, #0c2d6b 0%, transparent 40%),
+      radial-gradient(circle at 90% 10%, #142a5f 0%, transparent 45%),
+      linear-gradient(180deg, var(--bg), var(--bg-2));
+  }
+
+
+  /* ---------- Layout ---------- */
+
+  .container{
+    max-width:1200px;
+    margin:40px auto;
+    padding:24px;
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:24px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:.2px;
+  }
+
+  header .subtitle{
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:1fr 380px;
+    gap:22px;
+    align-items:start;
+  }
+
+  .stack{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+
+  /* ---------- Glass Card ---------- */
+
+  .card{
+    background:var(--card);
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
+
+    border-radius:var(--radius);
+    border:1px solid var(--card-border);
+
+    padding:20px;
+    box-shadow:var(--shadow);
+
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* neon edge highlight */
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    border-radius:inherit;
+    background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.08), transparent 70%);
+    opacity:.4;
+    pointer-events:none;
+  }
+
+
+  /* ---------- Typography ---------- */
+
+  .small{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  label{
+    display:block;
+    margin-bottom:6px;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.3px;
+    text-transform:uppercase;
+  }
+
+
+  /* ---------- Inputs ---------- */
+
+  input, select, textarea{
+    width:100%;
+    padding:11px 13px;
+    border-radius:var(--radius-sm);
+
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.02);
+
+    color:var(--text);
+    font-size:13px;
+
+    transition:all .18s ease;
+  }
+
+  input::placeholder,
+  textarea::placeholder{
+    color:rgba(255,255,255,0.35);
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(59,130,246,0.18);
+    background:rgba(255,255,255,0.03);
+  }
+
+
+  /* ---------- Buttons ---------- */
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    padding:11px 16px;
+    border-radius:10px;
+    border:0;
+
+    background:linear-gradient(180deg,var(--accent),#2563eb);
+    color:white;
+
+    font-weight:600;
+    letter-spacing:.2px;
+    cursor:pointer;
+
+    box-shadow:
+      0 6px 18px var(--accent-glow),
+      0 0 0 1px rgba(255,255,255,0.08) inset;
+
+    transition:all .18s ease;
+  }
+
+  .btn:hover{
+    transform:translateY(-1px);
+    box-shadow:
+      0 10px 28px var(--accent-glow),
+      0 0 0 1px rgba(255,255,255,0.12) inset;
+  }
+
+  .btn:active{
+    transform:translateY(1px);
+  }
+
+  .btn.ghost{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.1);
+    color:var(--muted);
+    box-shadow:none;
+  }
+
+  .btn.ghost:hover{
+    background:rgba(255,255,255,0.05);
+    color:var(--text);
+  }
+
+
+  /* ---------- Result Orb ---------- */
+
+  .result-circle{
+    width:96px;
+    height:96px;
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:36px;
+    font-weight:700;
+
+    margin:14px auto;
+
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 70%),
+      rgba(255,255,255,0.02);
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    box-shadow:
+      inset 0 0 35px rgba(255,255,255,0.05),
+      0 0 35px rgba(59,130,246,0.15);
+  }
+
+
+  /* ---------- Code / Logs ---------- */
+
+  pre.inline{
+    background:#071323;
+    border-radius:10px;
+    padding:12px;
+    font-family:var(--mono);
+    color:#cfe9ff;
+    font-size:13px;
+    border:1px solid rgba(255,255,255,0.08);
+  }
+
+
+  /* ---------- Tables ---------- */
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+
+  th,td{
+    padding:9px 6px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+
+  th{
+    color:var(--muted);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+  }
+
+  tbody tr:hover{
+    background:rgba(255,255,255,0.03);
+  }
+
+
+  /* ---------- Footer ---------- */
+
+  footer{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:22px;
+    text-align:center;
+    opacity:.7;
+  }
+
+
+  /* ---------- Responsive ---------- */
+
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr}
+  }
+
   </style>
 </head>
 <body>

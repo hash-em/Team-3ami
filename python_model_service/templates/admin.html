@@ -2,50 +2,267 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport"</head> content="width=device-width,initial-scale=1" />
   <title>Model Admin — BundleIQ</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --surface: #0b1220;
-      --muted: #94a3b8;
-      --accent: #60a5fa;
-      --good: #10b981;
-      --bad: #ef4444;
-      --card: #0b1220;
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    html,body { height:100%; margin:0; background: linear-gradient(180deg,#071028 0%, #071126 60%); color:#e6eef8; font-family:var(--font); }
-    .wrap { max-width:1100px; margin:28px auto; padding:24px; }
-    header { display:flex; align-items:center; gap:16px; margin-bottom:18px; }
-    header h1 { margin:0; font-size:20px; letter-spacing:0.2px; }
-    header .sub { color:var(--muted); font-size:13px; margin-top:4px; }
-    .row { display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:start; }
-    .col { background:var(--card); border-radius:10px; padding:16px; box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
-    .card-title { font-size:13px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.06em; }
-    pre.json { background:#071124; border:1px solid rgba(255,255,255,0.04); padding:12px; border-radius:6px; overflow:auto; max-height:240px; font-size:13px; color:#cfe9ff; }
-    .btn { display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:8px; background:linear-gradient(180deg,#0b2b4a,#07203a); color:#fff; border:1px solid rgba(255,255,255,0.04); cursor:pointer; font-weight:600; font-size:13px; }
-    .btn.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); }
-    .meta { display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; }
-    .meta .pill { background: rgba(255,255,255,0.03); padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px; }
-    .section { margin-bottom:14px; }
-    table { width:100%; border-collapse:collapse; font-size:13px; }
-    th,td { text-align:left; padding:8px 6px; border-bottom:1px solid rgba(255,255,255,0.03); }
-    th { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:0.06em; }
-    .small { font-size:12px; color:var(--muted); }
-    .status-ok { color:var(--good); font-weight:700; }
-    .status-bad { color:var(--bad); font-weight:700; }
-    .flex { display:flex; gap:12px; align-items:center; }
-    .logs { background:#050917; border:1px dashed rgba(255,255,255,0.03); padding:10px; border-radius:6px; max-height:220px; overflow:auto; font-family:monospace; font-size:12px; color:#cfe9ff; }
-    footer { margin-top:18px; color:var(--muted); font-size:12px; text-align:center; }
-    .chip { padding:6px 8px; border-radius:6px; background:rgba(255,255,255,0.03); color:var(--muted); font-weight:600; font-size:12px; }
+
+  /* =========================================================
+     BUNDLEIQ AI</title></style> CONTROL CENTER
+     Hyper-modern corporate ML admin interface
+     ========================================================= */
+
+  :root{
+    --bg:#040913;
+    --bg-2:#08152e;
+
+    --card:rgba(255,255,255,0.035);
+    --card-border:rgba(255,255,255,0.08);
+
+    --text:#eaf2ff;
+    --muted:#8fa3bf;
+
+    --accent:#3b82f6;
+    --accent-2:#60a5fa;
+    --accent-glow:rgba(59,130,246,0.45);
+
+    --radius:14px;
+    --radius-sm:10px;
+
+    --shadow:
+      0 14px 45px rgba(0,0,0,0.65),
+      0 0 0 1px rgba(255,255,255,0.03) inset;
+
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+
+  /* ---------- GLOBAL ---------- */
+
+  html,body{
+    margin:0;
+    height:100%;
+    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto;
+    color:var(--text);
+
+    background:
+      radial-gradient(circle at 15% 0%, #0c2d6b 0%, transparent 40%),
+      radial-gradient(circle at 90% 10%, #132a60 0%, transparent 45%),
+      linear-gradient(180deg,var(--bg),var(--bg-2));
+  }
+
+
+  /* ---------- LAYOUT ---------- */
+
+  .wrap{
+    max-width:1300px;
+    margin:40px auto;
+    padding:24px;
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:1fr 380px;
+    gap:24px;
+  }
+
+  .col{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+
+  /* ---------- HEADER ---------- */
+
+  header{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:28px;
+  }
+
+  header h1{
+    margin:0;
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:.3px;
+  }
+
+  header .sub{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  .flex{
+    display:flex;
+    gap:10px;
+  }
+
+
+  /* ---------- CARDS ---------- */
+
+  .section{
+    background:var(--card);
+    border-radius:var(--radius);
+    border:1px solid var(--card-border);
+    backdrop-filter:blur(16px) saturate(160%);
+    padding:20px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .section::before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    border-radius:inherit;
+    background:linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.08), transparent 70%);
+    opacity:.4;
+    pointer-events:none;
+  }
+
+  .card-title{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+
+
+  /* ---------- BUTTONS ---------- */
+
+  .btn{
+    padding:10px 16px;
+    border-radius:10px;
+    border:0;
+    font-weight:600;
+    cursor:pointer;
+    color:white;
+
+    background:linear-gradient(180deg,var(--accent),#2563eb);
+
+    box-shadow:
+      0 6px 20px var(--accent-glow),
+      0 0 0 1px rgba(255,255,255,0.08) inset;
+
+    transition:.18s ease;
+  }
+
+  .btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 12px 30px var(--accent-glow);
+  }
+
+  .btn.ghost{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.1);
+    color:var(--muted);
+    box-shadow:none;
+  }
+
+  .btn.ghost:hover{
+    background:rgba(255,255,255,0.05);
+    color:var(--text);
+  }
+
+
+  /* ---------- LOGS / JSON ---------- */
+
+  .json,
+  .logs{
+    background:#071323;
+    border-radius:10px;
+    padding:14px;
+    font-family:var(--mono);
+    font-size:13px;
+    border:1px solid rgba(255,255,255,0.08);
+    max-height:320px;
+    overflow:auto;
+  }
+
+
+  /* ---------- TABLE ---------- */
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+
+  th,td{
+    padding:10px 6px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+
+  th{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    color:var(--muted);
+  }
+
+  tbody tr:hover{
+    background:rgba(255,255,255,0.03);
+  }
+
+
+  /* ---------- STATUS PILLS ---------- */
+
+  .pill{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.08);
+  }
+
+  .chip{
+    padding:3px 8px;
+    border-radius:6px;
+    background:rgba(59,130,246,0.18);
+    color:#cfe6ff;
+    font-weight:600;
+  }
+
+
+  /* ---------- SMALL ---------- */
+
+  .small{
+    font-size:12px;
+    color:var(--muted);
+  }
+
+
+  /* ---------- SCROLL ---------- */
+
+  ::-webkit-scrollbar{
+    width:10px;
+  }
+
+  ::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,0.15);
+    border-radius:8px;
+  }
+
+
+  /* ---------- MOBILE ---------- */
+
+  @media (max-width:1000px){
+    .row{grid-template-columns:1fr}
+  }
+
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div>
-        <h1>BundleIQ — Model Admin Dashboard T</h1>
+        <h1>BundleIQ — Model Admin Dashboard</h1>
         <div class="sub">Overview · retraining · model versions · basic anomaly reporting</div>
       </div>
       <div style="margin-left:auto" class="flex">
@@ -64,9 +281,9 @@
             </div>
             <div style="width:280px">
               <div class="card-title">Quick Actions</div>
-              <div class="meta" style="margin-top:8px">
-                <div class="pill" id="lastRetrain">Last retrain: —</div>
-                <div class="pill" id="feedbackCount">Feedback rows: —</div>
+              <div class="meta" style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+                <div class="pill" id="lastRetrain" style="display:inline-block">Last retrain: —</div>
+                <div class="pill" id="feedbackCount" style="display</body></header></div></h1>:inline-block">Feedback rows: —</div>
               </div>
               <div style="margin-top:12px">
                 <button id="downloadFeedback" class="btn ghost" style="width:100%">Download feedback.csv</button>
@@ -92,26 +309,35 @@
           <div class="card-title">Recent Predictions / History (last 20)</div>
           <div id="historyWrap" style="max-height:300px; overflow:auto;">
             <table id="historyTable">
-              <thead><tr><th>Time</th><th>Client</th><th>Bundle</th><th>Latency</th></tr></thead</body></header></div></h1></th>>
-              <tbody><tr><td colspan="4" class="small">Loading…</td></tr></tbody>
-            </table</th></th></th>
+              <thead>
+                <</thead>tr>
+                  <th>Time</th>
+                  <th>Client</th>
+                  <th>Bundle</th></th></th></th>
+                  <th>Latency</th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="4" class="small">Loading…</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
       </div>
 
       <aside class="col" style="min-width:320px;">
-        <div class="section">
+        <div class="</tbody>section">
           <div class="card-title">Retrain Controls</div>
           <div style="display:flex;flex-direction:column;gap:10px">
             <div class="small">Retrain threshold: <span id="retrainThreshold" class="chip">—</span></div>
             <div class="small">Minimum interval between retrains: <span id="retrainInterval" class="chip">—</span></div>
             <div>
-              <button id="triggerNow" class</div>="btn" style="width:100%">Start Retrain Now (async)</button>
+              <button id="triggerNow" class="btn" style="width:100%">Start Retrain Now (async)</button>
             </div>
-            <div>
-              <button id="triggerNowSync" class="btn ghost" style="width:100%">Start Retrain & wait (sync)</button>
-            </</div>div>
+            <div></div>
+              <button id="triggerNowSync" class="btn ghost</div>" style="width:100%">Start Retrain &amp; wait (sync)</button>
+            </div>
           </div>
         </div>
 
@@ -119,8 +345,12 @@
           <div class="card-title">Models</div>
           <div id="modelsList" style="max-height:220px; overflow:auto;">
             <table>
-              <</table>thead><tr><th>Model</th></th><th>Action</th></tr></thead>
-              <tbody id="modelsTbody"><tr</th>><td colspan="2" class="small">Loading…</td></tr></tbody>
+              <thead>
+                <tr><th>Model</th><th>Action</th></tr>
+              </thead></table></thead>
+              <tbody id="modelsTbody</th></th>">
+                <tr><td colspan="2" class="small">Loading…</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -135,8 +365,10 @@
   </div>
 
 <script>
-  const el = id => document.getElementById(id);
-  const jsonPretty = obj => JSON.stringify(obj, null, 2);
+  const el</script> = id => document.getElementById(id);
+  const jsonPretty = obj => {
+    try { return JSON.stringify(obj, null, 2); } catch(e) { return String(obj); }
+  };
 
   async function fetchJson(path, opts) {
     try {
@@ -164,7 +396,7 @@
       try {
         const h = await fetchJson('/health');
         el('modelInfo').textContent = jsonPretty(h);
-        el('adminLogs').textContent = (new Date()).toISOString() + ' — fetched /health\\n' + el('adminLogs').textContent;
+        el('adminLogs').textContent = (new Date()).toISOString() + ' — fetched /health\n' + el('adminLogs').textContent;
       } catch (err) {
         el('modelInfo').textContent = 'Failed to fetch /health: ' + err.message;
       }
@@ -182,7 +414,7 @@
       try {
         const r = await fetchJson('/admin/reports');
         const rep = r.reports || r; // be tolerant
-        el('reports').textContent = rep.length ? rep.slice(-20).map(x => JSON.stringify(x)).reverse().join('\\n\\n') : 'No reports';
+        el('reports').textContent = rep.length ? rep.slice(-20).map(x => JSON.stringify(x)).reverse().join('\n\n') : 'No reports';
       } catch (err) {
         el('reports').textContent = 'Failed to fetch reports: ' + err.message;
       }
@@ -227,13 +459,12 @@
 
       // misc: display thresholds from server env if available by fetching /health or metrics
       try {
-        // best-effort: request /health then /metrics to surface retrain config if exposed
         const meta = await fetchJson('/health');
         el('lastRetrain').textContent = 'Model: ' + (meta.model?.source ?? '—');
       } catch(e) {}
     } catch (err) {
       console.error(err);
-      el('adminLogs').textContent = (new Date()).toISOString() + ' — error: ' + err.message + '\\n' + el('adminLogs').textContent;
+      el('adminLogs').textContent = (new Date()).toISOString() + ' — error: ' + err.message + '\n' + el('adminLogs').textContent;
     }
   }
 
@@ -245,7 +476,7 @@
           const t = await r.text();
           throw new Error('Failed to start retrain: ' + r.status + ' ' + t);
         }
-        el('adminLogs').textContent = (new Date()).toISOString() + ' — triggered retrain (async)\\n' + el('adminLogs').textContent;
+        el('adminLogs').textContent = (new Date()).toISOString() + ' — triggered retrain (async)\n' + el('adminLogs').textContent;
         return { status:'started' };
       } else {
         // synchronous call: wait for response
@@ -255,11 +486,11 @@
           throw new Error('Retrain sync failed: ' + r.status + ' ' + t);
         }
         const body = await r.json();
-        el('adminLogs').textContent = (new Date()).toISOString() + ' — retrain sync result: ' + JSON.stringify(body) + '\\n' + el('adminLogs').textContent;
+        el('adminLogs').textContent = (new Date()).toISOString() + ' — retrain sync result: ' + JSON.stringify(body) + '\n' + el('adminLogs').textContent;
         return body;
       }
     } catch (err) {
-      el('adminLogs').textContent = (new Date()).toISOString() + ' — retrain error: ' + err.message + '\\n' + el('adminLogs').textContent;
+      el('adminLogs').textContent = (new Date()).toISOString() + ' — retrain error: ' + err.message + '\n' + el('adminLogs').textContent;
       throw err;
     } finally {
       await refreshAll();
@@ -273,9 +504,10 @@
     el('triggerNow').addEventListener('click', () => triggerRetrain(true));
     el('triggerNowSync').addEventListener('click', () => triggerRetrain(false));
     el('downloadFeedback').addEventListener('click', () => {
-      // simply open the CSV path; server should serve static file if available at /python_model_service/feedback.csv
-      window.open('/feedback', '_blank'); // fallback: most servers will return 405; provide manual download via file manager
-      alert('If the browser cannot download /feedback directly, retrieve the file from server filesystem at python_model_service/feedback.csv');
+      // open the CSV path; server should serve the file at /feedback
+      window.open('/feedback', '_blank');
+      // provide an inline hint for users if download fails
+      setTimeout(()=> alert('If the browser cannot download /feedback directly, retrieve the file from server filesystem at python_model_service/feedback.csv'), 50);
     });
     el('openModelsDir').addEventListener('click', async () => {
       try {
