@@ -9,13 +9,36 @@ def preprocess(df):
 
     df = df.copy()
     # Cyclical encoding for month/week/day (captures periodicity)
-    df["Month_Sin"] = np.sin(2 * np.pi * df["Policy_Start_Month"] / 12)
-    df["Month_Cos"] = np.cos(2 * np.pi * df["Policy_Start_Month"] / 12)
-    df["Week_Sin"] = np.sin(2 * np.pi * df["Policy_Start_Week"] / 52)
-    df["Week_Cos"] = np.cos(2 * np.pi * df["Policy_Start_Week"] / 52)
-    df["Day_Sin"] = np.sin(2 * np.pi * df["Policy_Start_Day"] / 31)
-    df["Day_Cos"] = np.cos(2 * np.pi * df["Policy_Start_Day"] / 31)
+    months = {
+        "December": 12,
+        "November": 11,
+        "October": 10,
+        "September": 9,
+        "August": 8,
+        "July": 7,
+        "June": 6,
+        "May": 5,
+        "April": 4,
+        "March": 3,
+        "February": 2,
+        "January": 1
+    }
+    if "Policy_Start_Month" in df.columns:
+        month_num = df["Policy_Start_Month"].map(months)
+        month_num = month_num.fillna(6.5)   # safe fallback
 
+        df["Month_Sin"] = np.sin(2 * np.pi * month_num / 12)
+        df["Month_Cos"] = np.cos(2 * np.pi * month_num / 12)
+
+    # ---- Week (already numeric 1–52)
+    if "Policy_Start_Week" in df.columns:
+        df["Week_Sin"] = np.sin(2 * np.pi * df["Policy_Start_Week"] / 52)
+        df["Week_Cos"] = np.cos(2 * np.pi * df["Policy_Start_Week"] / 52)
+
+    # ---- Day (already numeric 1–31)
+    if "Policy_Start_Day" in df.columns:
+        df["Day_Sin"] = np.sin(2 * np.pi * df["Policy_Start_Day"] / 31)
+        df["Day_Cos"] = np.cos(2 * np.pi * df["Policy_Start_Day"] / 31)
     # -------------------------
     # DROP IDS
     # -------------------------
@@ -103,6 +126,11 @@ def preprocess(df):
     df["Loyal_No_Claims"] = (
         (df["Existing_Policyholder"] == 1) & (df["Years_Without_Claims"] > 3)
     ).astype(int)
+
+    df = df.drop_duplicates()
+    num_cols = df.select_dtypes(include=["int64","float64"]).columns
+    df[num_cols] = df[num_cols].fillna(df[num_cols].median())
+
     return df
 
 def load_model():
