@@ -1,0 +1,2 @@
+timestamp,user_id,predicted_bundle,actual_bundle,payload_json
+2026-02-22T06:22:01.693706Z,USR_00123,0,6,"{""User_ID"": ""USR_00123"", ""Estimated_Annual_Income"": 28000, ""Adult_Dependents"": 2, ""Child_D</body></header></div></h1></div>ependents"": 0, ""Infant_Dependents"": 0, ""Previous_Claims_Filed"": 3, ""Vehicles_on_Policy"": 0, ""Custom_Riders_Requested"": 0, ""Policy_Cancelled_Post_Purchase"": 1, ""Region_Code"": ""AUT""}"

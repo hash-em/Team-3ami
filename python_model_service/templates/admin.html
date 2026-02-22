@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Model Admin — BundleIQ</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #0b1220;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --good: #10b981;
+      --bad: #ef4444;
+      --card: #0b1220;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body { height:100%; margin:0; background: linear-gradient(180deg,#071028 0%, #071126 60%); color:#e6eef8; font-family:var(--font); }
+    .wrap { max-width:1100px; margin:28px auto; padding:24px; }
+    header { display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+    header h1 { margin:0; font-size:20px; letter-spacing:0.2px; }
+    header .sub { color:var(--muted); font-size:13px; margin-top:4px; }
+    .row { display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:start; }
+    .col { background:var(--card); border-radius:10px; padding:16px; box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
+    .card-title { font-size:13px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.06em; }
+    pre.json { background:#071124; border:1px solid rgba(255,255,255,0.04); padding:12px; border-radius:6px; overflow:auto; max-height:240px; font-size:13px; color:#cfe9ff; }
+    .btn { display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:8px; background:linear-gradient(180deg,#0b2b4a,#07203a); color:#fff; border:1px solid rgba(255,255,255,0.04); cursor:pointer; font-weight:600; font-size:13px; }
+    .btn.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); }
+    .meta { display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; }
+    .meta .pill { background: rgba(255,255,255,0.03); padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px; }
+    .section { margin-bottom:14px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th,td { text-align:left; padding:8px 6px; border-bottom:1px solid rgba(255,255,255,0.03); }
+    th { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:0.06em; }
+    .small { font-size:12px; color:var(--muted); }
+    .status-ok { color:var(--good); font-weight:700; }
+    .status-bad { color:var(--bad); font-weight:700; }
+    .flex { display:flex; gap:12px; align-items:center; }
+    .logs { background:#050917; border:1px dashed rgba(255,255,255,0.03); padding:10px; border-radius:6px; max-height:220px; overflow:auto; font-family:monospace; font-size:12px; color:#cfe9ff; }
+    footer { margin-top:18px; color:var(--muted); font-size:12px; text-align:center; }
+    .chip { padding:6px 8px; border-radius:6px; background:rgba(255,255,255,0.03); color:var(--muted); font-weight:600; font-size:12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>BundleIQ — Model Admin Dashboard T</h1>
+        <div class="sub">Overview · retraining · model versions · basic anomaly reporting</div>
+      </div>
+      <div style="margin-left:auto" class="flex">
+        <button id="refreshAll" class="btn ghost">Refresh</button>
+        <button id="triggerRetrain" class="btn">Trigger Retrain</button>
+      </div>
+    </header>
+
+    <div class="row">
+      <div class="col">
+        <div class="section">
+          <div class="card-title">Model Status</div>
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+            <div style="flex:1">
+              <pre id="modelInfo" class="json">Loading model info…</pre>
+            </div>
+            <div style="width:280px">
+              <div class="card-title">Quick Actions</div>
+              <div class="meta" style="margin-top:8px">
+                <div class="pill" id="lastRetrain">Last retrain: —</div>
+                <div class="pill" id="feedbackCount">Feedback rows: —</div>
+              </div>
+              <div style="margin-top:12px">
+                <button id="downloadFeedback" class="btn ghost" style="width:100%">Download feedback.csv</button>
+              </div>
+              <div style="margin-top:10px">
+                <button id="openModelsDir" class="btn ghost" style="width:100%">List model versions</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="card-title">Metrics</div>
+          <pre id="metrics" class="json">Loading metrics…</pre>
+        </div>
+
+        <div class="section">
+          <div class="card-title">Recent Reports</div>
+          <div id="reports" class="logs">Loading reports…</div>
+        </div>
+
+        <div class="section">
+          <div class="card-title">Recent Predictions / History (last 20)</div>
+          <div id="historyWrap" style="max-height:300px; overflow:auto;">
+            <table id="historyTable">
+              <thead><tr><th>Time</th><th>Client</th><th>Bundle</th><th>Latency</th></tr></thead</body></header></div></h1></th>>
+              <tbody><tr><td colspan="4" class="small">Loading…</td></tr></tbody>
+            </table</th></th></th>
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="col" style="min-width:320px;">
+        <div class="section">
+          <div class="card-title">Retrain Controls</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="small">Retrain threshold: <span id="retrainThreshold" class="chip">—</span></div>
+            <div class="small">Minimum interval between retrains: <span id="retrainInterval" class="chip">—</span></div>
+            <div>
+              <button id="triggerNow" class</div>="btn" style="width:100%">Start Retrain Now (async)</button>
+            </div>
+            <div>
+              <button id="triggerNowSync" class="btn ghost" style="width:100%">Start Retrain & wait (sync)</button>
+            </</div>div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="card-title">Models</div>
+          <div id="modelsList" style="max-height:220px; overflow:auto;">
+            <table>
+              <</table>thead><tr><th>Model</th></th><th>Action</th></tr></thead>
+              <tbody id="modelsTbody"><tr</th>><td colspan="2" class="small">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="card-title">Admin Logs</div>
+          <div id="adminLogs" class="logs">Waiting for activity…</div>
+        </div>
+      </aside>
+    </div>
+
+  </div>
+
+<script>
+  const el = id => document.getElementById(id);
+  const jsonPretty = obj => JSON.stringify(obj, null, 2);
+
+  async function fetchJson(path, opts) {
+    try {
+      const r = await fetch(path, opts);
+      if (!r.ok) {
+        const txt = await r.text();
+        throw new Error('HTTP ' + r.status + ': ' + txt);
+      }
+      const j = await r.json();
+      return j;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async function refreshAll() {
+    try {
+      el('modelInfo').textContent = 'Loading model info…';
+      el('metrics').textContent = 'Loading metrics…';
+      el('reports').textContent = 'Loading reports…';
+      el('modelsTbody').innerHTML = '<tr><td colspan="2" class="small">Loading…</td></tr>';
+      el('historyTable').querySelector('tbody').innerHTML = '<tr><td colspan="4" class="small">Loading…</td></tr>';
+
+      // model / health
+      try {
+        const h = await fetchJson('/health');
+        el('modelInfo').textContent = jsonPretty(h);
+        el('adminLogs').textContent = (new Date()).toISOString() + ' — fetched /health\\n' + el('adminLogs').textContent;
+      } catch (err) {
+        el('modelInfo').textContent = 'Failed to fetch /health: ' + err.message;
+      }
+
+      // metrics
+      try {
+        const m = await fetchJson('/metrics');
+        el('metrics').textContent = jsonPretty(m);
+        el('feedbackCount').textContent = 'Feedback rows: ' + (m.total_feedback ?? '—');
+      } catch (err) {
+        el('metrics').textContent = 'Failed to fetch /metrics: ' + err.message;
+      }
+
+      // reports
+      try {
+        const r = await fetchJson('/admin/reports');
+        const rep = r.reports || r; // be tolerant
+        el('reports').textContent = rep.length ? rep.slice(-20).map(x => JSON.stringify(x)).reverse().join('\\n\\n') : 'No reports';
+      } catch (err) {
+        el('reports').textContent = 'Failed to fetch reports: ' + err.message;
+      }
+
+      // models
+      try {
+        const r = await fetchJson('/admin/models');
+        const models = r.models || [];
+        const tbody = el('modelsTbody');
+        if (!models.length) {
+          tbody.innerHTML = '<tr><td colspan="2" class="small">No saved model versions</td></tr>';
+        } else {
+          tbody.innerHTML = models.map(m => `<tr><td class="small">${m}</td><td><button data-model="${m}" class="btn ghost btn-download" style="font-size:12px;padding:6px 10px">Download</button></td></tr>`).join('');
+          // wire download buttons
+          document.querySelectorAll('.btn-download').forEach(b => b.addEventListener('click', (ev) => {
+            const name = ev.currentTarget.dataset.model;
+            window.open('/admin/model/' + encodeURIComponent(name), '_blank');
+          }));
+        }
+      } catch (err) {
+        el('modelsTbody').innerHTML = '<tr><td colspan="2" class="small">Failed to list models: '+err.message+'</td></tr>';
+      }
+
+      // history
+      try {
+        const h = await fetchJson('/history?page=1&limit=20');
+        const rows = h.data || [];
+        if (!rows.length) {
+          el('historyTable').querySelector('tbody').innerHTML = '<tr><td colspan="4" class="small">No history yet</td></tr>';
+        } else {
+          el('historyTable').querySelector('tbody').innerHTML = rows.map(r => {
+            const t = new Date(r.timestamp).toLocaleString();
+            const uid = (r.prediction && r.prediction.User_ID) || (r.clientData && r.clientData.User_ID) || '—';
+            const bundle = (r.prediction && r.prediction.Purchased_Coverage_Bundle) ?? '—';
+            const lat = (r.durationMs != null) ? (r.durationMs + ' ms') : '—';
+            return `<tr><td class="small">${t}</td><td class="small">${uid}</td><td class="small">${bundle}</td><td class="small">${lat}</td></tr>`;
+          }).join('');
+        }
+      } catch (err) {
+        el('historyTable').querySelector('tbody').innerHTML = '<tr><td colspan="4" class="small">Failed to load history: '+err.message+'</td></tr>';
+      }
+
+      // misc: display thresholds from server env if available by fetching /health or metrics
+      try {
+        // best-effort: request /health then /metrics to surface retrain config if exposed
+        const meta = await fetchJson('/health');
+        el('lastRetrain').textContent = 'Model: ' + (meta.model?.source ?? '—');
+      } catch(e) {}
+    } catch (err) {
+      console.error(err);
+      el('adminLogs').textContent = (new Date()).toISOString() + ' — error: ' + err.message + '\\n' + el('adminLogs').textContent;
+    }
+  }
+
+  async function triggerRetrain(asyncRun=true) {
+    try {
+      if (asyncRun) {
+        const r = await fetch('/admin/retrain', { method:'POST' });
+        if (!r.ok) {
+          const t = await r.text();
+          throw new Error('Failed to start retrain: ' + r.status + ' ' + t);
+        }
+        el('adminLogs').textContent = (new Date()).toISOString() + ' — triggered retrain (async)\\n' + el('adminLogs').textContent;
+        return { status:'started' };
+      } else {
+        // synchronous call: wait for response
+        const r = await fetch('/admin/trigger-retrain', { method:'POST' });
+        if (!r.ok) {
+          const t = await r.text();
+          throw new Error('Retrain sync failed: ' + r.status + ' ' + t);
+        }
+        const body = await r.json();
+        el('adminLogs').textContent = (new Date()).toISOString() + ' — retrain sync result: ' + JSON.stringify(body) + '\\n' + el('adminLogs').textContent;
+        return body;
+      }
+    } catch (err) {
+      el('adminLogs').textContent = (new Date()).toISOString() + ' — retrain error: ' + err.message + '\\n' + el('adminLogs').textContent;
+      throw err;
+    } finally {
+      await refreshAll();
+    }
+  }
+
+  // wire UI
+  document.addEventListener('DOMContentLoaded', () => {
+    el('refreshAll').addEventListener('click', refreshAll);
+    el('triggerRetrain').addEventListener('click', () => triggerRetrain(true));
+    el('triggerNow').addEventListener('click', () => triggerRetrain(true));
+    el('triggerNowSync').addEventListener('click', () => triggerRetrain(false));
+    el('downloadFeedback').addEventListener('click', () => {
+      // simply open the CSV path; server should serve static file if available at /python_model_service/feedback.csv
+      window.open('/feedback', '_blank'); // fallback: most servers will return 405; provide manual download via file manager
+      alert('If the browser cannot download /feedback directly, retrieve the file from server filesystem at python_model_service/feedback.csv');
+    });
+    el('openModelsDir').addEventListener('click', async () => {
+      try {
+        const m = await fetchJson('/admin/models');
+        alert('Models:\\n' + (m.models || []).join('\\n'));
+      } catch (e) {
+        alert('Failed to list models: ' + e.message);
+      }
+    });
+
+    // initial load
+    refreshAll();
+
+    // auto-refresh every 30s
+    setInterval(refreshAll, 30000);
+  });
+</script>
+</body>
+</html>

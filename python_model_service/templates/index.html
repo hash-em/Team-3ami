@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="</head>utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BundleIQ — Recommender (Vanilla UI)</title>
+  <style>
+    :root{
+      --bg:#071029;
+      --card:#0b1422;
+      --muted:#94a3b8;
+      --accent:#2b7ddf;
+      --good:#10b981;
+      --danger:#ef4444;
+      --radius:10px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", monospace;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial; background:linear-gradient(180deg,#041226,#071129); color:#e6eef8}
+    .container{max-width:1100px;margin:28px auto;padding:18px}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+    header h1{margin:0;font-size:20px}
+    header .subtitle{color:var(--muted);font-size:13px}
+    .layout{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
+    .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    label{display:block;margin-bottom:6px;color:var(--muted);font-size:13px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    input[type="text"], input[type="number"], select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;box-sizing:border-box}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:0;background:linear-gradient(180deg,var(--accent),#1b61b0);color:#fff;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .result-circle{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;margin:10px auto;border:3px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)}
+    pre.inline{background:#071323;padding:10px;border-radius:8px;color:#cfe9ff;overflow:auto;font-family:var(--mono);font-size:13px}
+    .small{font-size:13px;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
+    th{color:var(--muted);font-size:12px;text-transform:uppercase}
+    footer{color:var(--muted);font-size:12px;margin-top:18px;text-align:center}
+    .stack{display:flex;flex-direction:column;gap:12px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>BundleIQ — Insurance Recommender</h1>
+        <div class="subtitle">Vanilla frontend — Predict, review history, and send feedback</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button id="btn-refresh" class="btn btn-ghost">Refresh</button>
+        <button id="btn-admin" class="btn btn-ghost">Open Admin</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Left column: form + result + history -->
+      <div class="stack">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div>
+              <strong>New Prediction</strong>
+              <div class="small">Fill client info and request a suggested bundle</div>
+            </div>
+            <div class="small">API: <span id="api-status">unknown</span></div>
+          </div>
+
+          <form id="predict-form" autocomplete="off">
+            <div class="grid-2">
+              <div>
+                <label for="User_ID">User ID</label>
+                <input id="User_ID" name="User_ID" type="text" placeholder="USR_0001" />
+              </div>
+              <div>
+                <label for="Estimated_Annual_Income">Annual Income (USD)</label>
+                <input id="Estimated_Annual_Income" name="Estimated_Annual_Income" type="number" min="0" placeholder="60000" />
+              </div>
+
+              <div>
+                <label for="Adult_Dependents">Adult Dependents</label>
+                <input id="Adult_Dependents" name="Adult_Dependents" type="number" min="0" value="0" />
+              </div>
+              <div>
+                <label for="Child_Dependents">Child Dependents</label>
+                <input id="Child_Dependents" name="Child_D</body></header></div></h1></div>ependents" type="number" min="0" value="0" />
+              </div>
+
+              <div>
+                <label for="Infant Dependents">Infant Dependents</label>
+                <input id="Infant_Dependents" name="Infant_Dependents" type="number" min="0" value="0" />
+              </div>
+              <div>
+                <label for"Previous_Claims_Filed">Previous Claims Filed</label>
+                <input id="Previous_Claims_Filed" name="Previous_Claims_Filed" type="number" min="0" value="0" />
+              </div>
+
+              <div>
+                <label for="Vehicles_on_Policy">Vehicles on Policy</label>
+                </div>
+                <input id="Vehicles_on_Policy" name="Vehicles_on_Policy" type="number" min="0" value="1" />
+              </div>
+              <div>
+                <label for="Custom_Riders_Requested"></div>Custom Riders Requested</label>
+                <input id="Custom_Riders_Requested" name="Custom_Riders_Requested" type="number" min="0" value="0" />
+              </div>
+
+              <div>
+                <label for="Policy_Cancel</div>led_Post_Purchase">Policy Cancelled Post-Purchase</label>
+                <select id="Policy_Cancelled_Post_Purchase" name="Policy_Cancelled_Post_Purchase">
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                </select>
+              </div>
+              <div></div>
+                <label for="Region_Code">Region Code</label>
+                <input id="Region_Code" name="Region_Code" type="text" placeholder="R01" />
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:12px">
+              <button type="submit" class="btn">Predict</button>
+              <button type="button" id="btn-reset" class="btn btn-ghost">Reset</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Recommendation</strong></div>
+            <div class="small"></strong>Latency: <span id="latency">—</span></div>
+          </div>
+
+          <div id="result" style="padding-top:12px">
+            <div class="small">No prediction yet</div>
+          </div>
+
+          <div id="feedback-controls" style="margin-top:12px;display:none">
+            <div class="small" style="margin-bottom:8px">Record actual bundle chosen by the user</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select id="actual-bundle" aria-label="Actual bundle"></select>
+              <button id="btn-send-feedback" class="btn btn-ghost">Submit Feedback</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div><strong>Recent Predictions</strong></div>
+            <div class="small"><button id="btn-refresh-history" class="btn btn-ghost">Refresh</button></div>
+          </div id="history" class="pre-container" style="margin-top:8px">
+            <pre class="inline" id="history-pre">No history yet</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: health, metrics, controls -->
+      <aside class="stack">
+        <div class="card">
+          <div><strong>Service</strong> Health</strong></div>
+          <pre class="inline" id="health-pre">Loading…</pre>
+        </div>
+
+        <div class="card">
+          <div><strong>Metrics</strong></div>
+          <pre class="inline" id="metrics-pre">Loading…</pre>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong></strong>Controls</strong></div>
+            <div class="small">Admin</div>
+          </div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+            <button id="btn-trigger-retrain" class="btn btn-ghost">Trigger Retrain (admin)</button>
+            <button id="btn-download-feedback" class="btn btn-ghost">Open feedback.csv (server)</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <small>Vanilla frontend connected to the model service. Feedback is appended to feedback</small>.csv for retraining.</small>
+    </footer>
+  </div>
+
+  <script>
+    // Vanilla JS client that talks to the Flask model service endpoints:
+    // /predict/single, /feedback, /metrics, /history, /health, /admin/retrain
+    const apiBase = ''; // same-origin (Flask serves this template)
+
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    function setText(id, txt){ const el = document.getElementById(id); if(el) el.textContent = txt; }
+
+    function populateActualOptions() {
+      const sel = $('#actual-bundle');
+      sel.innerHTML = '<option value="">— select —</option>';
+      for(let i=0;i<=9;i++){
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${i} · Bundle ${i}`;
+        sel.appendChild(opt);
+      }
+    }
+
+    async function fetchJson(path, opts){
+      const r = await fetch(apiBase + path, opts);
+      if(!r.ok) {
+        const t = await r.text().catch(()=>'<no body>');
+        throw new Error(`HTTP ${r.status}: ${t}`);
+      }
+      return r.json();
+    }
+
+    async function refreshHealth(){
+      try {
+        const j = await fetchJson('/health');
+        $('#health-pre').textContent = JSON.stringify(j, null, 2);
+        $('#api-status').textContent = j.status || 'ok';
+      } catch(e){
+        $('#health-pre').textContent = 'Failed to fetch health: ' + e.message;
+        $('#api-status').textContent = 'offline';
+      }
+    }
+
+    async function refreshMetrics(){
+      try {
+        const j = await fetchJson('/metrics');
+        $('#metrics-pre').textContent = JSON.stringify(j, null, 2);
+      } catch(e){
+        $('#metrics-pre').textContent = 'Failed to fetch metrics: ' + e.message;
+      }
+    }
+
+    async function refreshHistory(){
+      try {
+        const j = await fetchJson('/history?page=1&limit=20');
+        const rows = j.data || [];
+        if(!rows.length) {
+          $('#history-pre').textContent = 'No recent predictions';
+          return;
+        }
+        const lines = rows.map(r => {
+          const t = new Date(r.timestamp).toLocaleString();
+          const uid = r.prediction?.User_ID || r.clientData?.User_ID || '—';
+          const b = r.prediction?.Purchased_Coverage_Bundle ?? '—';
+          const lat = r.durationMs ? r.durationMs + ' ms' : '—';
+          return `${t} — ${uid} — Bundle ${b} — ${lat}`;
+        });
+        $('#history-pre').textContent = lines.join('\n');
+      } catch(e){
+        $('#history-pre').textContent = 'Failed to fetch history: ' + e.message;
+      }
+    }
+
+    function formToObject(form){
+      const fm = new FormData(form);
+      const out = {};
+      for(const [k,v] of fm.entries()){
+        if(v === '') continue;
+        // convert numeric-ish values
+        if(!isNaN(v) && v.trim() !== '') {
+          out[k] = Number(v);
+        } else {
+          out[k] = v;
+        }
+      }
+      return out;
+    }
+
+    async function submitPredict(ev){
+      ev.preventDefault();
+      const form = $('#predict-form');
+      const body = formToObject(form);
+      if(!body.User_ID) body.User_ID = 'USR_' + Date.now();
+      $('#result').innerHTML = '<div class="small">Requesting prediction…</div>';
+      try {
+        const t0 = performance.now();
+        const r = await fetch(apiBase + '/predict/single', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({data: body})
+        });
+        const t1 = performance.now();
+        if(!r.ok){
+          const txt = await r.text().catch(()=>'');
+          throw new Error(txt || 'Prediction failed');
+        }
+        const j = await r.json();
+        const pred = j.prediction || {};
+        state.last = {request: body, prediction: pred, historyId: j.history_id, durationMs: j.duration_ms || Math.round(t1-t0)};
+        renderResult();
+        $('#feedback-controls').style.display = 'block';
+        setText('latency', (j.duration_ms || Math.round(t1-t0)) + ' ms');
+        // refresh history/metrics after a short delay
+        setTimeout(()=>{ refreshHistory(); refreshMetrics(); }, 200);
+      } catch(e){
+        $('#result').innerHTML = '<div class="small">Prediction error: ' + e.message + '</div>';
+      }
+    }
+
+    function renderResult(){
+      const s = state.last;
+      if(!s){ $('#result').innerHTML = '<div class="small">No prediction yet</div>'; $('#feedback-controls').style.display = 'none'; return; }
+      const p = s.prediction;
+      const bundle = (p.Purchased_Coverage_Bundle !== undefined) ? p.Purchased_Coverage_Bundle : '—';
+      $('#result').innerHTML = `
+        <div style="text-align:center">
+          <div class="result-circle">${bundle}</div>
+          <div style="font-weight:700">Bundle ${bundle}</div>
+          <div class="small">User: ${p.User_ID || '—'}</div>
+          <div class="small" style="margin-top:6px">Session: ${(s.historyId||'—').slice(0,10)}</div>
+        </div>
+      `;
+      $('#feedback-controls').style.display = 'block';
+    }
+
+    async function sendFeedback(){
+      if(!state.last) { alert('No prediction to send feedback for'); return; }
+      const actual = $('#actual-bundle').value;
+      if(actual === '') { alert('Choose the actual bundle'); return; }
+      const payload = {
+        historyId: state.last.historyId,
+        User_ID: state.last.prediction.User_ID,
+        predicted_bundle: state.last.prediction.Purchased_Coverage_Bundle,
+        actual_bundle: Number(actual),
+        clientData: state.last.request
+      };
+      try {
+        const r = await fetch(apiBase + '/feedback', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if(!r.ok){
+          const txt = await r.text().catch(()=>'');
+          throw new Error(txt || 'feedback failed');
+        }
+        alert('Feedback submitted. Thank you!');
+        // refresh
+        await Promise.all([refreshMetrics(), refreshHistory()]);
+      } catch(e){
+        alert('Failed to submit feedback: ' + e.message);
+      }
+    }
+
+    async function triggerRetrain(){
+      try {
+        const r = await fetch(apiBase + '/admin/retrain', {method:'POST'});
+        if(!r.ok){
+          const txt = await r.text().catch(()=>'');
+          throw new Error(txt || 'retrain failed');
+        }
+        alert('Retrain started (async). Check Admin for details.');
+      } catch(e){
+        alert('Retrain error: ' + e.message);
+      }
+    }
+
+    const state = { last: null };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      populateActualOptions();
+      $('#predict-form').addEventListener('submit', submitPredict);
+      $('#btn-reset').addEventListener('click', ()=>{ $('#predict-form').reset(); state.last=null; renderResult(); });
+      $('#btn-send-feedback').addEventListener('click', sendFeedback);
+      $('#btn-refresh').addEventListener('click', ()=>{ refreshHealth(); refreshMetrics(); refreshHistory(); });
+      $('#btn-refresh-history').addEventListener('click', refreshHistory);
+      $('#btn-admin').addEventListener('click', ()=>{ window.open('/admin','_blank'); });
+      $('#btn-trigger-retrain').addEventListener('click', triggerRetrain);
+      $('#btn-download-feedback').addEventListener('click', ()=>{ alert('feedback.csv is available on the server filesystem at python_model_service/feedback.csv'); });
+
+      // initial load
+      refreshHealth();
+      refreshMetrics();
+      refreshHistory();
+      renderResult();
+
+      // periodic refresh
+      setInterval(()=>{ refreshHealth(); refreshMetrics(); }, 20000);
+    });
+  </script>
+</body>
+</html>
