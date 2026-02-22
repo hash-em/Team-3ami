@@ -134,16 +134,52 @@ def preprocess(df):
     return df
 
 def load_model():
-    # Load and return your trained model from disk.
-    # Example: return joblib.load('model.pkl')
-    model = None
+    """Load the trained CatBoost model from disk."""
+    model = CatBoostClassifier()
+    model.load_model("model.cbm")
     return model
 
+
 def predict(df, model):
-    # Generate predictions on the preprocessed DataFrame.
-    # This is the only function that is timed.
-    predictions = None
-    return predictions
-if __name__ == '__main__':
-    df = pd.read_csv('test.csv')
-    preprocess(df)
+    """
+    Generate predictions and return a DataFrame with exactly:
+        User_ID  |  Purchased_Coverage_Bundle
+    """
+    # ---- preserve User_IDs BEFORE preprocess drops them ----
+    user_ids = df["User_ID"].copy()
+
+    # ---- run the teammate's preprocess (untouched) ----
+    df_processed = preprocess(df)
+
+    # ---- inference ----
+    preds = model.predict(df_processed)
+
+    # CatBoost may return a 2-D array (n, 1) — flatten to 1-D
+    if hasattr(preds, "ndim") and preds.ndim > 1:
+        preds = preds.ravel()
+
+    # ---- build judge-required output ----
+    result = pd.DataFrame({
+        "User_ID": user_ids,
+        "Purchased_Coverage_Bundle": preds,
+    })
+
+    return result
+
+
+if __name__ == "__main__":
+    # ---- quick local sanity check ----
+    df = pd.read_csv("test.csv")
+    model = load_model()
+    output = predict(df, model)
+
+    print("Output shape :", output.shape)
+    print("Output columns:", list(output.columns))
+    print(output.head(10))
+
+    # Validate judge requirements
+    assert list(output.columns) == ["User_ID", "Purchased_Coverage_Bundle"], \
+        "Column mismatch!"
+    assert output.shape[0] == df.shape[0], \
+        f"Row count mismatch: expected {df.shape[0]}, got {output.shape[0]}"
+    print("\n✅ All checks passed — output is judge-ready.")
