@@ -34,7 +34,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from flask import Flask, jsonify, request, render_template, render_template_string, send_from_directory
+# Defer importing Flask to the try/except below so the built-in shim can be used when Flask is not installed
 # Prefer real Flask if available; otherwise provide a tiny shim that is
 # sufficient for running the bundled tests in environments without Flask.
 try:

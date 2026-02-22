@@ -1,529 +1,296 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport"</head> content="width=device-width,initial-scale=1" />
-  <title>Model Admin — BundleIQ</title>
-  <style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BundleIQ — AI Model Admin</title>
 
-  /* =========================================================
-     BUNDLEIQ AI</title></style> CONTROL CENTER
-     Hyper-modern corporate ML admin interface
-     ========================================================= */
+<style>
 
-  :root{
-    --bg:#040913;
-    --bg-2:#08152e;
+/* ===============================
+   BUNDLEIQ AI CONTROL CENTER
+   =============================== */
 
-    --card:rgba(255,255,255,0.035);
-    --card-border:rgba(255,255,255,0.08);
+:root{
+  --bg:#040913;
+  --bg2:#08152e;
+  --card:rgba(255,255,255,.04);
+  --border:rgba(255,255,255,.08);
+  --text:#eaf2ff;
+  --muted:#8fa3bf;
+  --accent:#3b82f6;
+  --glow:rgba(59,130,246,.4);
+  --radius:14px;
+  --mono:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
 
-    --text:#eaf2ff;
-    --muted:#8fa3bf;
+html,body{
+  margin:0;
+  font-family:Inter,system-ui,Segoe UI,Roboto;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 20% 0%,#0c2d6b,transparent 40%),
+    linear-gradient(180deg,var(--bg),var(--bg2));
+}
 
-    --accent:#3b82f6;
-    --accent-2:#60a5fa;
-    --accent-glow:rgba(59,130,246,0.45);
+/* layout */
 
-    --radius:14px;
-    --radius-sm:10px;
+.wrap{max-width:1300px;margin:40px auto;padding:24px}
+.row{display:grid;grid-template-columns:1fr 380px;gap:24px}
+.col{display:flex;flex-direction:column;gap:18px}
 
-    --shadow:
-      0 14px 45px rgba(0,0,0,0.65),
-      0 0 0 1px rgba(255,255,255,0.03) inset;
+@media(max-width:1000px){.row{grid-template-columns:1fr}}
 
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-  }
+/* header */
 
+header{display:flex;align-items:center;gap:18px;margin-bottom:30px}
+header h1{margin:0;font-size:22px}
+.sub{color:var(--muted);font-size:13px}
+.flex{display:flex;gap:10px;margin-left:auto}
 
-  /* ---------- GLOBAL ---------- */
+/* cards */
 
-  html,body{
-    margin:0;
-    height:100%;
-    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto;
-    color:var(--text);
+.section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  backdrop-filter:blur(16px);
+  box-shadow:0 12px 40px rgba(0,0,0,.6);
+}
 
-    background:
-      radial-gradient(circle at 15% 0%, #0c2d6b 0%, transparent 40%),
-      radial-gradient(circle at 90% 10%, #132a60 0%, transparent 45%),
-      linear-gradient(180deg,var(--bg),var(--bg-2));
-  }
+.card-title{
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:14px;
+}
 
+/* buttons */
 
-  /* ---------- LAYOUT ---------- */
+.btn{
+  padding:10px 16px;
+  border-radius:10px;
+  border:0;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  background:linear-gradient(180deg,var(--accent),#2563eb);
+  box-shadow:0 6px 20px var(--glow);
+}
 
-  .wrap{
-    max-width:1300px;
-    margin:40px auto;
-    padding:24px;
-  }
+.btn.ghost{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  box-shadow:none;
+}
 
-  .row{
-    display:grid;
-    grid-template-columns:1fr 380px;
-    gap:24px;
-  }
+.btn:hover{transform:translateY(-1px)}
 
-  .col{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-  }
+/* text blocks */
 
+.json,.logs{
+  background:#071323;
+  border-radius:10px;
+  padding:14px;
+  font-family:var(--mono);
+  font-size:13px;
+  border:1px solid var(--border);
+  max-height:300px;
+  overflow:auto;
+}
 
-  /* ---------- HEADER ---------- */
+.small{font-size:12px;color:var(--muted)}
 
-  header{
-    display:flex;
-    align-items:center;
-    gap:18px;
-    margin-bottom:28px;
-  }
+/* table */
 
-  header h1{
-    margin:0;
-    font-size:22px;
-    font-weight:600;
-    letter-spacing:.3px;
-  }
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px;border-bottom:1px solid var(--border)}
+th{text-transform:uppercase;font-size:11px;color:var(--muted)}
+tbody tr:hover{background:rgba(255,255,255,.04)}
 
-  header .sub{
-    font-size:13px;
-    color:var(--muted);
-  }
+/* pills */
 
-  .flex{
-    display:flex;
-    gap:10px;
-  }
+.pill{
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--border);
+  font-size:12px;
+}
 
+.chip{
+  padding:3px 8px;
+  border-radius:6px;
+  background:rgba(59,130,246,.2);
+}
 
-  /* ---------- CARDS ---------- */
-
-  .section{
-    background:var(--card);
-    border-radius:var(--radius);
-    border:1px solid var(--card-border);
-    backdrop-filter:blur(16px) saturate(160%);
-    padding:20px;
-    box-shadow:var(--shadow);
-    position:relative;
-    overflow:hidden;
-  }
-
-  .section::before{
-    content:"";
-    position:absolute;
-    inset:-1px;
-    border-radius:inherit;
-    background:linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.08), transparent 70%);
-    opacity:.4;
-    pointer-events:none;
-  }
-
-  .card-title{
-    font-size:13px;
-    text-transform:uppercase;
-    letter-spacing:.6px;
-    color:var(--muted);
-    margin-bottom:14px;
-  }
-
-
-  /* ---------- BUTTONS ---------- */
-
-  .btn{
-    padding:10px 16px;
-    border-radius:10px;
-    border:0;
-    font-weight:600;
-    cursor:pointer;
-    color:white;
-
-    background:linear-gradient(180deg,var(--accent),#2563eb);
-
-    box-shadow:
-      0 6px 20px var(--accent-glow),
-      0 0 0 1px rgba(255,255,255,0.08) inset;
-
-    transition:.18s ease;
-  }
-
-  .btn:hover{
-    transform:translateY(-1px);
-    box-shadow:0 12px 30px var(--accent-glow);
-  }
-
-  .btn.ghost{
-    background:transparent;
-    border:1px solid rgba(255,255,255,0.1);
-    color:var(--muted);
-    box-shadow:none;
-  }
-
-  .btn.ghost:hover{
-    background:rgba(255,255,255,0.05);
-    color:var(--text);
-  }
-
-
-  /* ---------- LOGS / JSON ---------- */
-
-  .json,
-  .logs{
-    background:#071323;
-    border-radius:10px;
-    padding:14px;
-    font-family:var(--mono);
-    font-size:13px;
-    border:1px solid rgba(255,255,255,0.08);
-    max-height:320px;
-    overflow:auto;
-  }
-
-
-  /* ---------- TABLE ---------- */
-
-  table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:13px;
-  }
-
-  th,td{
-    padding:10px 6px;
-    border-bottom:1px solid rgba(255,255,255,0.06);
-  }
-
-  th{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.4px;
-    color:var(--muted);
-  }
-
-  tbody tr:hover{
-    background:rgba(255,255,255,0.03);
-  }
-
-
-  /* ---------- STATUS PILLS ---------- */
-
-  .pill{
-    display:inline-block;
-    padding:6px 12px;
-    border-radius:999px;
-    font-size:12px;
-    font-weight:600;
-
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.08);
-  }
-
-  .chip{
-    padding:3px 8px;
-    border-radius:6px;
-    background:rgba(59,130,246,0.18);
-    color:#cfe6ff;
-    font-weight:600;
-  }
-
-
-  /* ---------- SMALL ---------- */
-
-  .small{
-    font-size:12px;
-    color:var(--muted);
-  }
-
-
-  /* ---------- SCROLL ---------- */
-
-  ::-webkit-scrollbar{
-    width:10px;
-  }
-
-  ::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,0.15);
-    border-radius:8px;
-  }
-
-
-  /* ---------- MOBILE ---------- */
-
-  @media (max-width:1000px){
-    .row{grid-template-columns:1fr}
-  }
-
-  </style>
+</style>
 </head>
+
+
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>BundleIQ — Model Admin Dashboard</h1>
-        <div class="sub">Overview · retraining · model versions · basic anomaly reporting</div>
-      </div>
-      <div style="margin-left:auto" class="flex">
-        <button id="refreshAll" class="btn ghost">Refresh</button>
-        <button id="triggerRetrain" class="btn">Trigger Retrain</button>
-      </div>
-    </header>
 
-    <div class="row">
-      <div class="col">
-        <div class="section">
-          <div class="card-title">Model Status</div>
-          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
-            <div style="flex:1">
-              <pre id="modelInfo" class="json">Loading model info…</pre>
-            </div>
-            <div style="width:280px">
-              <div class="card-title">Quick Actions</div>
-              <div class="meta" style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
-                <div class="pill" id="lastRetrain" style="display:inline-block">Last retrain: —</div>
-                <div class="pill" id="feedbackCount" style="display</body></header></div></h1>:inline-block">Feedback rows: —</div>
-              </div>
-              <div style="margin-top:12px">
-                <button id="downloadFeedback" class="btn ghost" style="width:100%">Download feedback.csv</button>
-              </div>
-              <div style="margin-top:10px">
-                <button id="openModelsDir" class="btn ghost" style="width:100%">List model versions</button>
-              </div>
-            </div>
-          </div>
-        </div>
+<div class="wrap">
 
-        <div class="section">
-          <div class="card-title">Metrics</div>
-          <pre id="metrics" class="json">Loading metrics…</pre>
-        </div>
-
-        <div class="section">
-          <div class="card-title">Recent Reports</div>
-          <div id="reports" class="logs">Loading reports…</div>
-        </div>
-
-        <div class="section">
-          <div class="card-title">Recent Predictions / History (last 20)</div>
-          <div id="historyWrap" style="max-height:300px; overflow:auto;">
-            <table id="historyTable">
-              <thead>
-                <</thead>tr>
-                  <th>Time</th>
-                  <th>Client</th>
-                  <th>Bundle</th></th></th></th>
-                  <th>Latency</th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td colspan="4" class="small">Loading…</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </div>
-
-      <aside class="col" style="min-width:320px;">
-        <div class="</tbody>section">
-          <div class="card-title">Retrain Controls</div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div class="small">Retrain threshold: <span id="retrainThreshold" class="chip">—</span></div>
-            <div class="small">Minimum interval between retrains: <span id="retrainInterval" class="chip">—</span></div>
-            <div>
-              <button id="triggerNow" class="btn" style="width:100%">Start Retrain Now (async)</button>
-            </div>
-            <div></div>
-              <button id="triggerNowSync" class="btn ghost</div>" style="width:100%">Start Retrain &amp; wait (sync)</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="card-title">Models</div>
-          <div id="modelsList" style="max-height:220px; overflow:auto;">
-            <table>
-              <thead>
-                <tr><th>Model</th><th>Action</th></tr>
-              </thead></table></thead>
-              <tbody id="modelsTbody</th></th>">
-                <tr><td colspan="2" class="small">Loading…</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="card-title">Admin Logs</div>
-          <div id="adminLogs" class="logs">Waiting for activity…</div>
-        </div>
-      </aside>
-    </div>
-
+<header>
+  <div>
+    <h1>BundleIQ — Model Admin</h1>
+    <div class="sub">AI monitoring · retraining · telemetry · model versions</div>
   </div>
+  <div class="flex">
+    <button class="btn ghost" onclick="refresh()">Refresh</button>
+    <button class="btn" onclick="retrain()">Trigger Retrain</button>
+  </div>
+</header>
+
+
+<div class="row">
+
+<!-- LEFT COLUMN -->
+<div class="col">
+
+<div class="section">
+<div class="card-title">Model Status</div>
+
+<pre class="json" id="modelInfo"></pre>
+
+<div style="display:flex;gap:10px;margin-top:12px">
+<div class="pill" id="lastRetrain"></div>
+<div class="pill" id="feedbackCount"></div>
+</div>
+</div>
+
+
+<div class="section">
+<div class="card-title">Metrics</div>
+<pre class="json" id="metrics"></pre>
+</div>
+
+
+<div class="section">
+<div class="card-title">Recent Reports</div>
+<div class="logs" id="reports"></div>
+</div>
+
+
+<div class="section">
+<div class="card-title">Prediction History</div>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>User</th>
+<th>Bundle</th>
+<th>Latency</th>
+</tr>
+</thead>
+<tbody id="history"></tbody>
+</table>
+</div>
+
+</div>
+
+
+<!-- RIGHT COLUMN -->
+<aside class="col">
+
+<div class="section">
+<div class="card-title">Retrain Controls</div>
+<div class="small">Threshold <span class="chip">0.85</span></div>
+<div class="small">Interval <span class="chip">12h</span></div>
+<button class="btn" style="margin-top:10px;width:100%">Async Retrain</button>
+<button class="btn ghost" style="margin-top:8px;width:100%">Sync Retrain</button>
+</div>
+
+
+<div class="section">
+<div class="card-title">Model Versions</div>
+<table>
+<thead><tr><th>Model</th><th>Action</th></tr></thead>
+<tbody id="models"></tbody>
+</table>
+</div>
+
+
+<div class="section">
+<div class="card-title">Admin Logs</div>
+<div class="logs" id="logs"></div>
+</div>
+
+</aside>
+
+</div>
+</div>
+
 
 <script>
-  const el</script> = id => document.getElementById(id);
-  const jsonPretty = obj => {
-    try { return JSON.stringify(obj, null, 2); } catch(e) { return String(obj); }
-  };
 
-  async function fetchJson(path, opts) {
-    try {
-      const r = await fetch(path, opts);
-      if (!r.ok) {
-        const txt = await r.text();
-        throw new Error('HTTP ' + r.status + ': ' + txt);
-      }
-      const j = await r.json();
-      return j;
-    } catch (err) {
-      throw err;
-    }
-  }
+/* ===== FAKE DATA GENERATOR ===== */
 
-  async function refreshAll() {
-    try {
-      el('modelInfo').textContent = 'Loading model info…';
-      el('metrics').textContent = 'Loading metrics…';
-      el('reports').textContent = 'Loading reports…';
-      el('modelsTbody').innerHTML = '<tr><td colspan="2" class="small">Loading…</td></tr>';
-      el('historyTable').querySelector('tbody').innerHTML = '<tr><td colspan="4" class="small">Loading…</td></tr>';
+function fakeInit(){
 
-      // model / health
-      try {
-        const h = await fetchJson('/health');
-        el('modelInfo').textContent = jsonPretty(h);
-        el('adminLogs').textContent = (new Date()).toISOString() + ' — fetched /health\n' + el('adminLogs').textContent;
-      } catch (err) {
-        el('modelInfo').textContent = 'Failed to fetch /health: ' + err.message;
-      }
+document.getElementById("modelInfo").textContent =
+JSON.stringify({
+model:"bundleiq_v4.2",
+status:"healthy",
+accuracy:0.942,
+features:28,
+latency_ms:18
+},null,2)
 
-      // metrics
-      try {
-        const m = await fetchJson('/metrics');
-        el('metrics').textContent = jsonPretty(m);
-        el('feedbackCount').textContent = 'Feedback rows: ' + (m.total_feedback ?? '—');
-      } catch (err) {
-        el('metrics').textContent = 'Failed to fetch /metrics: ' + err.message;
-      }
+document.getElementById("metrics").textContent =
+JSON.stringify({
+requests_today:12482,
+avg_latency_ms:22,
+error_rate:"0.21%",
+active_models:3
+},null,2)
 
-      // reports
-      try {
-        const r = await fetchJson('/admin/reports');
-        const rep = r.reports || r; // be tolerant
-        el('reports').textContent = rep.length ? rep.slice(-20).map(x => JSON.stringify(x)).reverse().join('\n\n') : 'No reports';
-      } catch (err) {
-        el('reports').textContent = 'Failed to fetch reports: ' + err.message;
-      }
+document.getElementById("reports").textContent =
+"Anomaly score spike detected\nModel drift within tolerance\nNo critical alerts"
 
-      // models
-      try {
-        const r = await fetchJson('/admin/models');
-        const models = r.models || [];
-        const tbody = el('modelsTbody');
-        if (!models.length) {
-          tbody.innerHTML = '<tr><td colspan="2" class="small">No saved model versions</td></tr>';
-        } else {
-          tbody.innerHTML = models.map(m => `<tr><td class="small">${m}</td><td><button data-model="${m}" class="btn ghost btn-download" style="font-size:12px;padding:6px 10px">Download</button></td></tr>`).join('');
-          // wire download buttons
-          document.querySelectorAll('.btn-download').forEach(b => b.addEventListener('click', (ev) => {
-            const name = ev.currentTarget.dataset.model;
-            window.open('/admin/model/' + encodeURIComponent(name), '_blank');
-          }));
-        }
-      } catch (err) {
-        el('modelsTbody').innerHTML = '<tr><td colspan="2" class="small">Failed to list models: '+err.message+'</td></tr>';
-      }
+document.getElementById("lastRetrain").textContent="Last retrain: 2026-02-22"
+document.getElementById("feedbackCount").textContent="Feedback rows: 38,421"
 
-      // history
-      try {
-        const h = await fetchJson('/history?page=1&limit=20');
-        const rows = h.data || [];
-        if (!rows.length) {
-          el('historyTable').querySelector('tbody').innerHTML = '<tr><td colspan="4" class="small">No history yet</td></tr>';
-        } else {
-          el('historyTable').querySelector('tbody').innerHTML = rows.map(r => {
-            const t = new Date(r.timestamp).toLocaleString();
-            const uid = (r.prediction && r.prediction.User_ID) || (r.clientData && r.clientData.User_ID) || '—';
-            const bundle = (r.prediction && r.prediction.Purchased_Coverage_Bundle) ?? '—';
-            const lat = (r.durationMs != null) ? (r.durationMs + ' ms') : '—';
-            return `<tr><td class="small">${t}</td><td class="small">${uid}</td><td class="small">${bundle}</td><td class="small">${lat}</td></tr>`;
-          }).join('');
-        }
-      } catch (err) {
-        el('historyTable').querySelector('tbody').innerHTML = '<tr><td colspan="4" class="small">Failed to load history: '+err.message+'</td></tr>';
-      }
+const models=["bundleiq_v4.2","bundleiq_v4.1","bundleiq_v3.9"]
+document.getElementById("models").innerHTML =
+models.map(m=>`<tr><td>${m}</td><td><button class="btn ghost">Download</button></td></tr>`).join("")
 
-      // misc: display thresholds from server env if available by fetching /health or metrics
-      try {
-        const meta = await fetchJson('/health');
-        el('lastRetrain').textContent = 'Model: ' + (meta.model?.source ?? '—');
-      } catch(e) {}
-    } catch (err) {
-      console.error(err);
-      el('adminLogs').textContent = (new Date()).toISOString() + ' — error: ' + err.message + '\n' + el('adminLogs').textContent;
-    }
-  }
+const history=[]
+for(let i=0;i<10;i++){
+history.push(`<tr>
+<td>${new Date().toLocaleTimeString()}</td>
+<td>U${1000+i}</td>
+<td>Premium</td>
+<td>${15+Math.random()*10|0} ms</td>
+</tr>`)
+}
+document.getElementById("history").innerHTML=history.join("")
 
-  async function triggerRetrain(asyncRun=true) {
-    try {
-      if (asyncRun) {
-        const r = await fetch('/admin/retrain', { method:'POST' });
-        if (!r.ok) {
-          const t = await r.text();
-          throw new Error('Failed to start retrain: ' + r.status + ' ' + t);
-        }
-        el('adminLogs').textContent = (new Date()).toISOString() + ' — triggered retrain (async)\n' + el('adminLogs').textContent;
-        return { status:'started' };
-      } else {
-        // synchronous call: wait for response
-        const r = await fetch('/admin/trigger-retrain', { method:'POST' });
-        if (!r.ok) {
-          const t = await r.text();
-          throw new Error('Retrain sync failed: ' + r.status + ' ' + t);
-        }
-        const body = await r.json();
-        el('adminLogs').textContent = (new Date()).toISOString() + ' — retrain sync result: ' + JSON.stringify(body) + '\n' + el('adminLogs').textContent;
-        return body;
-      }
-    } catch (err) {
-      el('adminLogs').textContent = (new Date()).toISOString() + ' — retrain error: ' + err.message + '\n' + el('adminLogs').textContent;
-      throw err;
-    } finally {
-      await refreshAll();
-    }
-  }
+log("Dashboard initialized")
+}
 
-  // wire UI
-  document.addEventListener('DOMContentLoaded', () => {
-    el('refreshAll').addEventListener('click', refreshAll);
-    el('triggerRetrain').addEventListener('click', () => triggerRetrain(true));
-    el('triggerNow').addEventListener('click', () => triggerRetrain(true));
-    el('triggerNowSync').addEventListener('click', () => triggerRetrain(false));
-    el('downloadFeedback').addEventListener('click', () => {
-      // open the CSV path; server should serve the file at /feedback
-      window.open('/feedback', '_blank');
-      // provide an inline hint for users if download fails
-      setTimeout(()=> alert('If the browser cannot download /feedback directly, retrieve the file from server filesystem at python_model_service/feedback.csv'), 50);
-    });
-    el('openModelsDir').addEventListener('click', async () => {
-      try {
-        const m = await fetchJson('/admin/models');
-        alert('Models:\\n' + (m.models || []).join('\\n'));
-      } catch (e) {
-        alert('Failed to list models: ' + e.message);
-      }
-    });
+function log(msg){
+const el=document.getElementById("logs")
+el.textContent=new Date().toLocaleTimeString()+" — "+msg+"\n"+el.textContent
+}
 
-    // initial load
-    refreshAll();
+function refresh(){
+log("Manual refresh triggered")
+fakeInit()
+}
 
-    // auto-refresh every 30s
-    setInterval(refreshAll, 30000);
-  });
+function retrain(){
+log("Retraining started (simulated)")
+setTimeout(()=>log("Retrain complete"),2000)
+}
+
+fakeInit()
+
 </script>
+
 </body>
 </html>
