@@ -1,2 +1,5 @@
 catboost
-shap
+joblib
+pandas
+numpy
+scikit-learn
